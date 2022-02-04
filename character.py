@@ -42,7 +42,7 @@ class Character:
 
     @staticmethod
     def get_CSV_headers():
-        return['id', 'charaName', 'unitName', 'rarity', 'weapon', 'element', 'weapon', 'hp', 'mp', 'atk', 'def', 'crit', 'swordSkills', 'battleSkills', 'specialSkills', 'upgradedStats']
+        return['id', 'charaName', 'unitName', 'rarity', 'weapon', 'element', 'hp', 'mp', 'atk', 'def', 'crit', 'swordSkills', 'battleSkills', 'specialSkills', 'upgradedStats']
 
     def to_CSV_line(self):
         data = []
@@ -57,11 +57,11 @@ class Character:
         data.append(self.atk)
         data.append(self.deff)
         data.append(self.crit)
-        data.append('\t'.join([f'{key}: {val}' for key,
+        data.append('|'.join([f'{key}: {val}' for key,
                     val in self.swordSkills.items()]) if self.swordSkills else '')
-        data.append('\t'.join([f'{key}: {val}' for key,
+        data.append('|'.join([f'{key}: {val}' for key,
                     val in self.battleSkills.items()]) if self.battleSkills else '')
-        data.append('\t'.join(self.specialSkills) if self.specialSkills else '')
-        data.append('\t'.join([f'{key}: {val}' for key,
+        data.append('|'.join(self.specialSkills) if self.specialSkills else '')
+        data.append('|'.join([f'{key}: {val}' for key,
                     val in self.upgradedStats.items()]) if self.upgradedStats else '')
         return data

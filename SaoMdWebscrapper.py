@@ -199,6 +199,7 @@ def webscrap():
         num += 1
     sorted_d = sorted(alldata.items(), key=operator.itemgetter(0))
     write_JSON(json.dumps(sorted_d, indent=4))
+    charaList = sorted(charaList,key=lambda o: o.charaId)
     make_CSV(charaList)
 
 

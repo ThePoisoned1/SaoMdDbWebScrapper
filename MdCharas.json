@@ -39,7 +39,8 @@
             "crit": 1049,
             "swordSkills": {
                 "SS1": "Rage Spike",
-                "SS2": "Vertical Arc"
+                "SS2": "Vertical Arc",
+                "SS3": "Atk. +3%"
             },
             "battleSkills": {},
             "specialSkills": null,
@@ -137,9 +138,12 @@
             "crit": 1377,
             "swordSkills": {
                 "SS1": "Rage Spike",
-                "SS2": "Savage Fulcrum"
+                "SS2": "Savage Fulcrum",
+                "SS3": "Crit. +3%"
             },
-            "battleSkills": {},
+            "battleSkills": {
+                "BS1": "MP +3%"
+            },
             "specialSkills": null,
             "upgradedStats": null
         }
@@ -18047,8 +18051,7 @@
             "crit": 1363,
             "swordSkills": {
                 "SS1": "Photon Shot",
-                "SS2": "Quick Draw",
-                "SS3": "Atk. +3%"
+                "SS2": "Quick Draw"
             },
             "battleSkills": {},
             "specialSkills": null,
