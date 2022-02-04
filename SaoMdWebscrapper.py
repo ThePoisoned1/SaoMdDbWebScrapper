@@ -49,6 +49,8 @@ def fix_name(name):
 def parse_name(name):
     return re.sub(' {2,}', ' ', name.split('\n')[1].strip())
 
+def get_chara_id(data):
+    return int(data.find_all('div', class_="glob__desc_type")[-1].text.strip().split(' ')[-1])
 
 def get_chara_basics(data):
     result = data.find_all('div', class_="title__first")
@@ -83,10 +85,11 @@ def get_chara_skills(data):
         specialSkillsInfo = specialSkillsInfo[-1].parent.find_all('img')
         for ssk in specialSkillsInfo:
             aux = ssk['src'].split('/')[-1]  # filename
-            aux = aux[4:]  # remove ssk_
-            aux = aux.split('.')[0]  # remove extension
-            aux = aux.replace('_', ' ').title()
-            specialSkills.append(aux)
+            if 'ssk' in aux:
+                aux = aux[4:]  # remove ssk_
+                aux = aux.split('.')[0]  # remove extension
+                aux = aux.replace('_', ' ').title()
+                specialSkills.append(aux)
     else:
         specialSkills = None
     return swordSkills, battleSkills, specialSkills
@@ -131,11 +134,12 @@ def get_chara_stats(data):
 
 
 def get_chara_data_from_html(data):
+    charaId = get_chara_id(data)
     name, unitName, rarity, weapon, element = get_chara_basics(data)
     swordSkills, battleSkills, specialSkills = get_chara_skills(data)
     hp, mp, att, deff, crit, upgradedStats = get_chara_stats(data)
     return Character(
-        charaId=0,
+        charaId=charaId,
         charaName=name,
         unitName=unitName,
         rarity=rarity,
@@ -143,7 +147,7 @@ def get_chara_data_from_html(data):
         element=element,
         swordSkills=swordSkills,
         battleSkills=battleSkills,
-        spceialSkills=specialSkills,
+        specialSkills=specialSkills,
         hp=hp,
         mp=mp,
         atk=att,
@@ -172,12 +176,16 @@ def write_JSON(data):
     with open('MdCharas.json', 'w+', encoding='utf-8') as f:
         f.write(data)
 
-
+def make_CSV(charaList):
+    with open('MdCharas.csv', 'w', encoding='UTF8',newline='') as f:
+        writer = csv.writer(f,delimiter=';')
+        writer.writerow(Character.get_CSV_headers())
+        writer.writerows([chara.to_CSV_line() for chara in charaList])
+    
 def webscrap():
     baseUrl = 'https://saomd.fanadata.com/character-'
-    charaIds = load_chara_ids('data.csv')
     alldata = {}
-    skipped = []
+    charaList = []
     num = 1
     while num < 1600:
         if num == 100:
@@ -186,18 +194,12 @@ def webscrap():
         if contains_chara_info(data):
             print(f'{baseUrl}{num}')
             chara = get_chara_data_from_html(data)
-            if charaIds.get(f'{chara.unitName} {chara.charaName}'.strip()):
-                chara.charaId = charaIds[f'{chara.unitName} {chara.charaName}'.strip(
-                )]
-                alldata[chara.charaId] = chara.__dict__()
-            else:
-                skipped.append(f'{chara.unitName} {chara.charaName}'.strip())
-        else:
-            print(num, end=', ')
+            alldata[chara.charaId] = chara.__dict__()
+            charaList.append(chara)
         num += 1
     sorted_d = sorted(alldata.items(), key=operator.itemgetter(0))
     write_JSON(json.dumps(sorted_d, indent=4))
-    pprint(skipped)
+    make_CSV(charaList)
 
 
 if __name__ == '__main__':
@@ -207,5 +209,5 @@ if __name__ == '__main__':
     # chara.charaId = charaIds[f'{chara.unitName} {chara.charaName}'.strip()]
     # alldata = {}
     # alldata[chara.charaId]=chara.__dict__()
-    # write_JSON(json.dumps(alldata,indent=4))
+    #write_JSON(json.dumps(alldata,indent=4))
     webscrap()
